@@ -2,3 +2,6 @@ infrastructure/keys/
 .env
 __pycache__/
 *.csv
+.terraform/
+*.tfstate
+*.tfstate.*
