@@ -2,7 +2,7 @@ import pandas as pd
 from sqlalchemy import create_engine, text
 
 # Connect to our local Docker Postgres
-DB_URL = "postgresql://farm_admin:farm_password@localhost:5433/farm_management"
+DB_URL = "postgresql://farm_admin:farm_password@127.0.0.1:5434/farm_management"
 engine = create_engine(DB_URL)
 
 def process_and_load_fao_data(csv_path):
