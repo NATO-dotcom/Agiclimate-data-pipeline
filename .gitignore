@@ -1,4 +1,4 @@
 infrastructure/keys/
 .env
 __pycache__/
-.csv
+*.csv
