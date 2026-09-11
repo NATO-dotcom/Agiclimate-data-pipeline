@@ -1,0 +1,36 @@
+version: '3.8'
+
+services:
+  # The Source: Farm Management System
+  farm_pg_source:
+    image: postgres:15
+    environment:
+      - POSTGRES_USER=farm_admin
+      - POSTGRES_PASSWORD=farm_password
+      - POSTGRES_DB=farm_management
+    ports:
+      - "5434:5432"
+    volumes:
+      - farm_pg_data:/var/lib/postgresql/data
+    networks:
+      - data_network
+
+  # Database UI for easy querying
+  pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=admin@farm.com
+      - PGADMIN_DEFAULT_PASSWORD=admin
+    ports:
+      - "8080:80"
+    depends_on:
+      - farm_pg_source
+    networks:
+      - data_network
+
+volumes:
+  farm_pg_data:
+
+networks:
+  data_network:
+    driver: bridge
