@@ -1,0 +1,75 @@
+[0m13:04:06.491507 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7ff2745ea3c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7ff276577890>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7ff272d179d0>]}
+
+
+============================== 13:04:06.598249 | 2e958d9d-c226-4aaa-893d-c6ae2a712111 ==============================
+[0m13:04:06.598249 [info ] [MainThread]: Running with dbt=1.12.4
+[0m13:04:06.599606 [debug] [MainThread]: running dbt with arguments {'hints_enabled': 'True', 'log_path': 'logs', 'partial_parse': 'True', 'static_parser': 'True', 'cache_selected_only': 'False', 'indirect_selection': 'eager', 'write_json': 'True', 'warn_error': 'None', 'printer_width': '80', 'invocation_command': 'dbt init agri_climate_models', 'quiet': 'False', 'introspect': 'True', 'use_colors': 'True', 'debug': 'False', 'send_anonymous_usage_stats': 'True', 'use_experimental_parser': 'False', 'maximum_seed_size_mib': '1', 'no_print': 'None', 'log_format': 'default', 'version_check': 'True', 'empty': 'None', 'log_cache_events': 'False', 'fail_fast': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'profiles_dir': '/home/techluna/.dbt', 'target_path': 'None'}
+[0m13:04:06.717341 [info ] [MainThread]: Creating dbt configuration folder at /home/techluna/.dbt
+[0m13:04:06.720319 [debug] [MainThread]: Starter project path: /home/techluna/Documents/DATA ENGINEERING/agri-climate-pipeline/agri-climate-pipeline/.venv/lib64/python3.14/site-packages/dbt/include/starter_project
+[0m13:04:06.726946 [info ] [MainThread]: Setting up your profile.
+[0m13:04:27.504278 [info ] [MainThread]: Profile agri_climate_models written to /home/techluna/.dbt/profiles.yml using target's sample configuration. Once updated, you'll be able to start developing with dbt.
+[0m13:04:27.522499 [info ] [MainThread]: Running dbt debug to validate the project...
+[0m13:04:27.524681 [info ] [MainThread]: dbt version: 1.12.4
+[0m13:04:27.525785 [info ] [MainThread]: python version: 3.14.7
+[0m13:04:27.526718 [info ] [MainThread]: python path: /home/techluna/Documents/DATA ENGINEERING/agri-climate-pipeline/agri-climate-pipeline/.venv/bin/python3
+[0m13:04:27.527654 [info ] [MainThread]: os info: Linux-7.1.13-200.fc44.x86_64-x86_64-with-glibc2.43
+[0m13:04:27.666239 [info ] [MainThread]: Using profiles dir at /home/techluna/.dbt
+[0m13:04:27.667145 [info ] [MainThread]: Using profiles.yml file at /home/techluna/.dbt/profiles.yml
+[0m13:04:27.667816 [info ] [MainThread]: Using dbt_project.yml file at /home/techluna/Documents/DATA ENGINEERING/agri-climate-pipeline/agri-climate-pipeline/warehouse/agri_climate_models/dbt_project.yml
+[0m13:04:27.671526 [info ] [MainThread]: adapter type: duckdb
+[0m13:04:27.672279 [info ] [MainThread]: adapter version: 1.11.0
+[0m13:04:27.887022 [info ] [MainThread]: Configuration:
+[0m13:04:27.887951 [info ] [MainThread]:   profiles.yml file [[32mOK found and valid[0m]
+[0m13:04:27.888619 [info ] [MainThread]:   dbt_project.yml file [[32mOK found and valid[0m]
+[0m13:04:27.889245 [info ] [MainThread]: Required dependencies:
+[0m13:04:27.890057 [debug] [MainThread]: Executing "git --help"
+[0m13:04:27.894016 [debug] [MainThread]: STDOUT: "b"usage: git [-v | --version] [-h | --help] [-C <path>] [-c <name>=<value>]\n           [--exec-path[=<path>]] [--html-path] [--man-path] [--info-path]\n           [-p | --paginate | -P | --no-pager] [--no-replace-objects] [--no-lazy-fetch]\n           [--no-optional-locks] [--no-advice] [--bare] [--git-dir=<path>]\n           [--work-tree=<path>] [--namespace=<name>] [--config-env=<name>=<envvar>]\n           <command> [<args>]\n\nThese are common Git commands used in various situations:\n\nstart a working area (see also: git help tutorial)\n   clone      Clone a repository into a new directory\n   init       Create an empty Git repository or reinitialize an existing one\n\nwork on the current change (see also: git help everyday)\n   add        Add file contents to the index\n   mv         Move or rename a file, a directory, or a symlink\n   restore    Restore working tree files\n   rm         Remove files from the working tree and from the index\n\nexamine the history and state (see also: git help revisions)\n   bisect     Use binary search to find the commit that introduced a bug\n   diff       Show changes between commits, commit and working tree, etc\n   grep       Print lines matching a pattern\n   log        Show commit logs\n   show       Show various types of objects\n   status     Show the working tree status\n\ngrow, mark and tweak your common history\n   backfill   Download missing objects in a partial clone\n   branch     List, create, or delete branches\n   commit     Record changes to the repository\n   history    EXPERIMENTAL: Rewrite history\n   merge      Join two or more development histories together\n   rebase     Reapply commits on top of another base tip\n   reset      Set `HEAD` or the index to a known state\n   switch     Switch branches\n   tag        Create, list, delete or verify tags\n\ncollaborate (see also: git help workflows)\n   fetch      Download objects and refs from another repository\n   pull       Fetch from and integrate with another repository or a local branch\n   push       Update remote refs along with associated objects\n\n'git help -a' and 'git help -g' list available subcommands and some\nconcept guides. See 'git help <command>' or 'git help <concept>'\nto read about a specific subcommand or concept.\nSee 'git help git' for an overview of the system.\n""
+[0m13:04:27.895032 [debug] [MainThread]: STDERR: "b''"
+[0m13:04:27.895819 [info ] [MainThread]:  - git [[32mOK found[0m]
+
+[0m13:04:27.896641 [info ] [MainThread]: Connection:
+[0m13:04:27.897491 [info ] [MainThread]:   database: dev
+[0m13:04:27.898227 [info ] [MainThread]:   schema: main
+[0m13:04:27.899105 [info ] [MainThread]:   path: dev.duckdb
+[0m13:04:27.900393 [info ] [MainThread]:   config_options: None
+[0m13:04:27.901692 [info ] [MainThread]:   extensions: None
+[0m13:04:27.902481 [info ] [MainThread]:   settings: {}
+[0m13:04:27.903671 [info ] [MainThread]:   external_root: .
+[0m13:04:27.905086 [info ] [MainThread]:   use_credential_provider: None
+[0m13:04:27.906680 [info ] [MainThread]:   attach: None
+[0m13:04:27.908338 [info ] [MainThread]:   filesystems: None
+[0m13:04:27.910310 [info ] [MainThread]:   remote: None
+[0m13:04:27.912045 [info ] [MainThread]:   plugins: None
+[0m13:04:27.913860 [info ] [MainThread]:   disable_transactions: False
+[0m13:04:27.915881 [info ] [MainThread]: Registered adapter: duckdb=1.11.0
+[0m13:04:28.148421 [debug] [MainThread]: Acquiring new duckdb connection 'debug'
+[0m13:04:28.243630 [debug] [MainThread]: Using duckdb connection "debug"
+[0m13:04:28.244370 [debug] [MainThread]: On debug: select 1 as id
+[0m13:04:28.244989 [debug] [MainThread]: Opening a new connection, currently in state init
+[0m13:04:28.290259 [debug] [MainThread]: SQL status: OK in 0.045 seconds
+[0m13:04:28.292925 [debug] [MainThread]: On debug: Close
+[0m13:04:28.294092 [info ] [MainThread]:   Connection test: [[32mOK connection ok[0m]
+
+[0m13:04:28.295228 [info ] [MainThread]: [32mAll checks passed![0m
+[0m13:04:28.296443 [info ] [MainThread]: Your new dbt project "agri_climate_models" was created!
+Initialized new project in /home/techluna/Documents/DATA ENGINEERING/agri-climate-pipeline/agri-climate-pipeline/warehouse/agri_climate_models/agri_climate_models
+
+For more information on how to configure the profiles.yml file,
+please consult the dbt documentation here:
+
+  https://docs.getdbt.com/docs/configure-your-profile
+
+One more thing:
+
+Need help? Don't hesitate to reach out to us via GitHub issues or on Slack:
+
+  https://community.getdbt.com/
+
+Happy modeling!
+
+[0m13:04:28.299568 [debug] [MainThread]: Resource report: {"command_name": "init", "command_success": true, "command_wall_clock_time": 22.091833, "process_in_blocks": "145808", "process_kernel_time": 0.991378, "process_mem_max_rss": "170852", "process_out_blocks": "45424", "process_user_time": 8.740669}
+[0m13:04:28.301709 [debug] [MainThread]: Command `dbt init` succeeded at 13:04:28.301222 after 22.09 seconds
+[0m13:04:28.303506 [debug] [MainThread]: Connection 'debug' was properly closed.
+[0m13:04:28.305411 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7ff2722668b0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7ff272af29f0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7ff272a86580>]}
+[0m13:04:28.307383 [debug] [MainThread]: Flushing usage events
+[0m13:04:30.762200 [debug] [MainThread]: An error was encountered while trying to flush usage events
