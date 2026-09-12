@@ -6,13 +6,13 @@ import io
 import time
 
 # 1. Postgres Connection (to get coordinates)
-PG_URL = "postgresql://farm_admin:farm_password@127.0.0.1:5434/farm_management"
+PG_URL = "postgresql://farm_admin:farm_password@farm_pg_source:5432/farm_management"
 engine = create_engine(PG_URL)
 
 # 2. MinIO Connection
 s3_client = boto3.client(
     's3',
-    endpoint_url='http://127.0.0.1:9000',
+    endpoint_url='http://minio:9000',
     aws_access_key_id='minio_admin',
     aws_secret_access_key='minio_password',
     region_name='us-east-1'
