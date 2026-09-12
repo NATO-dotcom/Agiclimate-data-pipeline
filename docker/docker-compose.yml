@@ -44,6 +44,18 @@ services:
     networks:
       - data_network
 
+  # Orchestrator
+  kestra:
+    image: kestra/kestra:latest
+    command: server local
+    ports:
+      - "8082:8080"  
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ../ingestion:/app/ingestion
+    networks:
+      - data_network
+
 volumes:
   farm_pg_data:
     name: docker_farm_pg_data
