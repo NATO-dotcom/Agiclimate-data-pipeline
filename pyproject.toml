@@ -1,0 +1,21 @@
+
+[project]
+name = "agri-climate-pipeline"
+version = "0.1.0"
+description = "My zero-cost local data pipeline"
+readme = "README.md"
+requires-python = ">=3.10"
+dependencies = [
+    "boto3>=1.43.93",
+    "dbt-core>=1.12.4",
+    "dbt-duckdb>=1.11.0",
+    "duckdb>=1.5.5",
+    "pandas>=2.3.3",
+    "psycopg2-binary>=2.9.13",
+    "pyarrow>=25.0.1",
+    "requests>=2.34.2",
+    "sqlalchemy>=2.0.52",
+]
+
+[tool.uv]
+package = false

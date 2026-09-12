@@ -1,0 +1,23 @@
+id: agri_climate_bronze_ingestion
+namespace: dev
+description: Automates the extraction of Postgres crop data and Open-Meteo climate data into the MinIO Bronze layer.
+
+tasks:
+  - id: run_extractions
+    type: io.kestra.plugin.scripts.shell.Commands
+    runner: PROCESS
+    warningOnStdErr: false
+    commands:
+      # 1. Install packages
+      - pip3 install pandas sqlalchemy psycopg2-binary boto3 pyarrow requests --target /tmp/pylibs --quiet --break-system-packages
+      - export PYTHONPATH="/tmp/pylibs"
+      
+      # 2. Navigate to the correct folder so Python can find yield.csv
+      - cd /app/ingestion
+      
+      # 3. Re-seed the source database
+      - python3 seed_db.py
+      
+      # 4. Execute the extractions
+      - python3 extract_postgres_to_minio.py
+      - python3 extract_weather_to_minio.py
