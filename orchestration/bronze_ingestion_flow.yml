@@ -21,3 +21,25 @@ tasks:
       # 4. Execute the extractions
       - python3 extract_postgres_to_minio.py
       - python3 extract_weather_to_minio.py
+
+
+
+# Orchestartion in bronze layer raw data ingestion and duckdb transformations in silver and gold layers
+
+id: agri_climate_bronze_ingestion
+namespace: dev
+description: Automates the extraction of Postgres crop data and Open-Meteo climate data into the MinIO Bronze layer, and transforms it using DuckDB.
+
+tasks:
+  - id: run_extractions
+    type: io.kestra.plugin.scripts.shell.Commands
+    runner: PROCESS
+    warningOnStdErr: false
+    commands:
+      - pip3 install pandas sqlalchemy psycopg2-binary boto3 pyarrow requests duckdb --target /tmp/pylibs --quiet --break-system-packages
+      - export PYTHONPATH="/tmp/pylibs"
+      - cd /app/ingestion
+      - python3 seed_db.py
+      - python3 extract_postgres_to_minio.py
+      - python3 extract_weather_to_minio.py
+      - python3 transform_duckdb.py
