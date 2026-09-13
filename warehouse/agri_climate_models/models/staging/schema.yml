@@ -1,0 +1,24 @@
+version: 2
+
+models:
+  - name: stg_crops
+    description: "Silver layer: Denormalized view of crop yields, fields, and regions."
+    columns:
+      - name: region_id
+        description: "The primary key identifying the geographical region."
+        tests:
+          - not_null
+      - name: harvest_year
+        description: "The year the crop was harvested."
+        tests:
+          - not_null
+
+  - name: stg_weather
+    description: "Silver layer: Aggregated annual weather metrics per region."
+    columns:
+      - name: region_id
+        tests:
+          - not_null
+      - name: total_rainfall_mm
+        tests:
+          - not_null
