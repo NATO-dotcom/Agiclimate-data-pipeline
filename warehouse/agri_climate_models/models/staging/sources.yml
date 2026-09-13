@@ -1,0 +1,18 @@
+version: 2
+
+sources:
+  - name: bronze
+    description: "Raw data extracted into the MinIO Data Lake"
+    tables:
+      - name: weather
+        meta:
+          external_location: "read_parquet('s3://agri-data-lake/bronze/climate_data/*.parquet')"
+      - name: yields
+        meta:
+          external_location: "read_parquet('s3://agri-data-lake/bronze/crop_data/harvest_yields.parquet')"
+      - name: fields
+        meta:
+          external_location: "read_parquet('s3://agri-data-lake/bronze/crop_data/fields.parquet')"
+      - name: regions
+        meta:
+          external_location: "read_parquet('s3://agri-data-lake/bronze/crop_data/regions.parquet')"
