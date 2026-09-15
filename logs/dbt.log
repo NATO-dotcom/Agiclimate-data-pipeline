@@ -1,0 +1,16 @@
+[0m10:15:20.875433 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'start', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f7bae0ae3c0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f7bafed5590>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f7bac8039d0>]}
+
+
+============================== 10:15:20.880077 | 14025862-5b8b-4751-a1c2-ee5a40041bc8 ==============================
+[0m10:15:20.880077 [info ] [MainThread]: Running with dbt=1.12.4
+[0m10:15:20.880703 [debug] [MainThread]: running dbt with arguments {'profiles_dir': '/home/techluna/Documents/DATA ENGINEERING/agri-climate-pipeline/agri-climate-pipeline/warehouse/agri_climate_models', 'log_path': 'logs', 'send_anonymous_usage_stats': 'True', 'cache_selected_only': 'False', 'debug': 'False', 'version_check': 'True', 'log_format': 'default', 'warn_error': 'None', 'log_cache_events': 'False', 'static_parser': 'True', 'indirect_selection': 'eager', 'quiet': 'False', 'warn_error_options': 'WarnErrorOptionsV2(error=[], warn=[], silence=[])', 'use_experimental_parser': 'False', 'hints_enabled': 'True', 'target_path': 'None', 'invocation_command': 'dbt seed', 'partial_parse': 'True', 'fail_fast': 'False', 'introspect': 'True', 'write_json': 'True', 'use_colors': 'True', 'maximum_seed_size_mib': '1', 'no_print': 'None', 'empty': 'False', 'printer_width': '80'}
+[0m10:15:20.881336 [error] [MainThread]: [[31mERROR[0m]: Encountered an error:
+Runtime Error
+  No dbt_project.yml found at expected path /home/techluna/Documents/DATA ENGINEERING/agri-climate-pipeline/agri-climate-pipeline/dbt_project.yml
+  Verify that each entry within packages.yml (and their transitive dependencies) contains a file named dbt_project.yml
+  
+[0m10:15:20.882635 [debug] [MainThread]: Resource report: {"command_name": "seed", "command_success": false, "command_wall_clock_time": 0.17133687, "process_in_blocks": "69896", "process_kernel_time": 0.225531, "process_mem_max_rss": "119736", "process_out_blocks": "72", "process_user_time": 1.906985}
+[0m10:15:20.883240 [debug] [MainThread]: Command `dbt seed` failed at 10:15:20.883127 after 0.17 seconds
+[0m10:15:20.883659 [debug] [MainThread]: Sending event: {'category': 'dbt', 'action': 'invocation', 'label': 'end', 'context': [<snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f7bac7856e0>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f7bac79ac30>, <snowplow_tracker.self_describing_json.SelfDescribingJson object at 0x7f7bac6a8270>]}
+[0m10:15:20.884103 [debug] [MainThread]: Flushing usage events
+[0m10:15:22.348883 [debug] [MainThread]: An error was encountered while trying to flush usage events
