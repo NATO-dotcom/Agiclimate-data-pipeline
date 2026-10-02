@@ -44,6 +44,9 @@ This separation ensures that each layer has a clear responsibility and that upst
   - [Job 2 — Broadcast Join & Aggregation](#job-2--broadcast-join--aggregation)
   - [Job 3 — MinIO Upload Pipeline](#job-3--minio-upload-pipeline)
   - [Dockerized Spark Execution](#dockerized-spark-execution)
+- [Kafka & Spark Streaming](#kafka--spark-streaming)
+  - [Job 4 — Kafka IoT Sensor Producer](#job-4--kafka-iot-sensor-producer)
+  - [Job 5 — Spark Structured Streaming Consumer](#job-5--spark-structured-streaming-consumer)
 - [dbt Project — agri_climate_models](#dbt-project--agri_climate_models)
   - [Staging Models](#staging-models)
   - [Mart Models](#mart-models)
@@ -122,6 +125,21 @@ It does so by:
 │   stg_crops, stg_weather →                                   │
 │        climate_impact_analysis (+ crop_categories seed)       │
 └──────────────────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────────────────────────┐
+│                  REAL-TIME STREAMING PATH (Experimental)           │
+│                                                                    │
+│  04_kafka_producer.py          05_spark_streaming.py               │
+│  (IoT Sensor Simulator)        (Structured Streaming Consumer)     │
+│         │                                │                         │
+│         ▼                                ▼                         │
+│  ┌──────────────┐              ┌─────────────────────┐             │
+│  │    Kafka      │──────────▶  │  Spark Streaming    │             │
+│  │  (Zookeeper)  │   topic:    │  + Stream-Static    │             │
+│  │  :9092        │   climate-  │    Join w/ regions   │             │
+│  └──────────────┘   sensors-   └─────────────────────┘             │
+│                      raw                                           │
+└────────────────────────────────────────────────────────────────────┘
 ```
 
 ---
@@ -133,6 +151,7 @@ It does so by:
 | **Source DB**      | PostgreSQL 15 (Dockerized)                                                                     |
 | **Data Lake**     | MinIO (S3-compatible object storage, Dockerized)                                               |
 | **Batch Processing** | Apache Spark / PySpark 4.2.0 (local mode + Dockerized)                                     |
+| **Streaming**     | Apache Kafka (Confluent 7.5.0 + Zookeeper) + Spark Structured Streaming                       |
 | **Transforms**    | DuckDB (in-process OLAP engine) + dbt-duckdb                                                  |
 | **Orchestration** | Kestra (workflow orchestrator, Dockerized, with cron scheduling)                               |
 | **DB Admin UI**   | pgAdmin 4 (Dockerized)                                                                         |
@@ -183,7 +202,9 @@ agri-climate-pipeline/
 ├── spark_jobs/
 │   ├── 01_first_look.py             # Schema enforcement + CSV → Parquet conversion
 │   ├── 02_transform_join.py         # Broadcast join + aggregation + Gold report
-│   └── 03_minio_pipeline.py         # Full pipeline: join → aggregate → MinIO upload
+│   ├── 03_minio_pipeline.py         # Full pipeline: join → aggregate → MinIO upload
+│   ├── 04_kafka_producer.py         # IoT sensor simulator → Kafka topic
+│   └── 05_spark_streaming.py        # Spark Structured Streaming consumer + stream-static join
 │
 ├── spark_output/
 │   ├── yields_parquet/              # Partitioned Parquet output from Job 01
@@ -332,9 +353,9 @@ docker run --network host agriclimate-spark:latest
 
 | Table              | Description                                              | Key |
 | ------------------ | -------------------------------------------------------- | --- |
-| `regions`          | East African countries with lat/lon and climate zones    | `region_id` (PK) |
-| `fields`           | Crop-specific production fields linked to regions        | `field_id` (PK), `region_id` (FK) |
-| `harvest_yields`   | Yearly yield records (kg) per field and crop type        | `harvest_id` (PK), `field_id` (FK) |
+| `regions`          | East African countries: `region_name`, lat/lon, `climate_zone` | `region_id` (PK) |
+| `fields`           | Crop-specific fields: `field_name`, `area_hectares`, `soil_type` | `field_id` (PK), `region_id` (FK) |
+| `harvest_yields`   | Yearly yield records: `crop_type`, `yield_kg`, `planting_date`, `harvest_date`, `updated_at` | `harvest_id` (PK), `field_id` (FK) |
 
 **Target countries**: Kenya, Rwanda, Uganda, Tanzania
 
@@ -467,6 +488,78 @@ docker run --network host agriclimate-spark:latest
 ```
 
 > The `--network host` flag allows the container to reach the MinIO instance running on the host at `127.0.0.1:9000`.
+
+---
+
+## Kafka & Spark Streaming
+
+The `spark_jobs/` directory also includes an **experimental real-time streaming layer** built with **Apache Kafka** and **Spark Structured Streaming**. While the batch pipeline (Jobs 01–03) processes data at rest, this streaming layer demonstrates how to process data *in motion* — simulating IoT climate sensors that emit readings in real time.
+
+**Why Streaming alongside Batch?** Batch processing (Spark, DuckDB) answers historical questions like "what was last year's yield?" Streaming answers *live* questions like "what is the current temperature in region X?" This project includes both to demonstrate the **Lambda Architecture** concept — a batch layer for comprehensive historical analysis and a speed layer for real-time insights.
+
+### Job 4 — Kafka IoT Sensor Producer
+
+**Script**: [`04_kafka_producer.py`](spark_jobs/04_kafka_producer.py)
+
+| Feature | Detail |
+| ------- | ------ |
+| **Library** | `confluent-kafka` Python client |
+| **Topic** | `climate-sensors-raw` |
+| **Broker** | `localhost:9092` (Dockerized Kafka) |
+| **Client ID** | `climate-sensor-fleet` |
+| **Emit interval** | Every 2 seconds |
+| **Delivery guarantee** | At-least-once (via `delivery_report` callback + `producer.flush()` on shutdown) |
+
+**Simulated sensor payload:**
+```json
+{
+    "sensor_id": "SENS-742",
+    "region_id": "R03",
+    "temp_c": 27.14,
+    "rainfall_mm": 12.5,
+    "yield_tons": 6.3,
+    "timestamp": "2026-10-02T10:30:00"
+}
+```
+
+The producer runs in an infinite loop (`Ctrl+C` to stop) and publishes randomized climate readings for regions `R01`–`R05`. Each message is JSON-serialized and sent to Kafka with a delivery callback that confirms successful partition placement.
+
+> **What is a Kafka Producer?** A producer is a client that publishes (writes) messages to a Kafka topic. A topic is an ordered, append-only log of messages, partitioned across brokers for parallelism. Consumers then read from these topics independently. This decouples the data *source* from the data *consumer*.
+
+### Job 5 — Spark Structured Streaming Consumer
+
+**Script**: [`05_spark_streaming.py`](spark_jobs/05_spark_streaming.py)
+
+| Feature | Detail |
+| ------- | ------ |
+| **Framework** | Spark Structured Streaming (micro-batch) |
+| **Kafka connector** | `spark-sql-kafka-0-10` (auto-resolved via `spark.jars.packages`) |
+| **Starting offsets** | `latest` (only new messages, no replay) |
+| **Output mode** | `append` (new rows per micro-batch) |
+| **Sink** | Console (for demonstration) |
+| **Join type** | Stream-static join (live stream + batch CSV) |
+
+**Processing pipeline:**
+1. **Read** raw bytes from the `climate-sensors-raw` Kafka topic
+2. **Cast** the binary `value` column to a UTF-8 string
+3. **Parse** the JSON string into structured columns using a predefined `StructType` schema
+4. **Join** the live stream with the static `region_lookup.csv` (loaded once as a batch DataFrame) using a **stream-static left join** on `region_id` — this enriches each sensor reading with `region_name` and `climate_zone`
+5. **Write** the enriched stream to the console in micro-batches
+
+> **Stream-Static Join**: Unlike a stream-stream join (which requires watermarking and state management), a stream-static join is simpler — the static side (`region_lookup.csv`) is loaded once into memory as a regular DataFrame, and each incoming micro-batch from Kafka is joined against it. This is ideal when the lookup data changes infrequently.
+
+> **Dynamic Kafka Connector Resolution**: The script uses `pyspark.__version__` to dynamically resolve the correct `spark-sql-kafka` JAR version, ensuring compatibility regardless of which PySpark version is installed.
+
+**Running the streaming pipeline:**
+```bash
+# Terminal 1: Start the Kafka producer (sends readings every 2s)
+uv run python spark_jobs/04_kafka_producer.py
+
+# Terminal 2: Start the Spark streaming consumer
+uv run python spark_jobs/05_spark_streaming.py
+```
+
+> **Prerequisites**: Docker services must be running (`docker compose up -d` in `docker/`) — specifically the Kafka and Zookeeper containers.
 
 ---
 
@@ -612,6 +705,8 @@ All services are defined in [`docker/docker-compose.yml`](docker/docker-compose.
 | **MinIO Console**  | `http://localhost:9001`    | —                          | `minio_admin` / `minio_password`         |
 | **MinIO API**      | `http://localhost:9000`    | `http://minio:9000`        | `minio_admin` / `minio_password`         |
 | **Kestra**         | `http://localhost:8082`    | —                          | No auth (local mode)                     |
+| **Zookeeper**      | `localhost:2181`           | `zookeeper:2181`           | No auth (Kafka coordination)             |
+| **Kafka**          | `localhost:9092`           | `kafka:29092`              | No auth (message broker)                 |
 | **Spark UI**       | `http://localhost:4040`    | —                          | No auth (available during Job 02 execution) |
 
 > **Why port `5434` instead of `5432`?** PostgreSQL runs on port `5432` _inside_ its container, but is mapped to `5434` on the host to avoid conflicts with any local PostgreSQL installation.
